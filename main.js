@@ -18,7 +18,7 @@ let Editors = document.getElementsByClassName("Edit");
 
 var ID = 0;
 var editing = false;
-var editingID = 0;
+var editingID = -1;
 
 const Books = []
 var active_books = []
@@ -40,12 +40,29 @@ function del(element){
     });
     console.log("Delete");
     Books.splice(i,1);
+    active_books = [...Books];
     clear();
     render(Books);
 }
 
+function reset_edit(){
+    clear_fields();
+    let i = Books.findIndex((book) => book.id == editingID);
+    let child_index = Array.from(bookList.children).findIndex((div)=>div.id == editingID);
+    let node = create_book_div(Books[i]);
+
+    bookList.replaceChild(node, bookList.children[child_index]);
+    editing = false;
+    editingID = -1;
+    submitButton.innerText = "Add Book";
+}
+
 function edit(element){
-    editing = !editing;
+    if (editingID > -1)
+        reset_edit();
+
+    editing = true;
+    // editing = !editing;
     console.log(editing);
     if (editing){
         editingID = element.dataset.id;
@@ -80,32 +97,35 @@ function edit(element){
 
         bookList.children[node_index].style.backgroundColor = "#a33737";
 
-    } else {
+        submitButton.innerText = "Save";
 
-        console.log("saving!");
-        let i = Books.findIndex((book) => book.id == editingID);
-        let child_index = Array.from(bookList.children).findIndex((div)=>div.id == i);
-        let node = bookList.children[child_index];
-        console.log(i);
-
-        Books[i].title = node.getElementsByClassName("titletxt")[0].value;
-        Books[i].author = node.getElementsByClassName("authortxt")[0].value;
-        Books[i].genre = node.getElementsByClassName("genretxt")[0].value;
-        Books[i].rate = node.getElementsByClassName("rating")[0].value;
-        Books[i].publication = pubDatefield.value;
-
-        const Book_card = `
-            <h3>${Books[i].title}</h3>
-            <b>Author:</b> ${Books[i].author}<br>
-            <b>Genre:</b> ${Books[i].genre}<br>
-            <b>Rate:</b> ${Books[i].rate}<br>
-            <button type="button" class="Delete" data-id="${Books[i].id}">Delete</button>
-            <button type="button" class="Edit" data-id="${Books[i].id}">Edit</button>
-        `
-        node.innerHTML = Book_card;
-        bookList.replaceChild(node, bookList.children[child_index]);
-        editing = false;
     }
+    // } else {
+
+    //     console.log("saving!");
+    //     let i = Books.findIndex((book) => book.id == editingID);
+    //     let child_index = Array.from(bookList.children).findIndex((div)=>div.id == editingID);
+    //     let node = bookList.children[child_index];
+    //     console.log(i);
+
+    //     Books[i].title = node.getElementsByClassName("titletxt")[0].value;
+    //     Books[i].author = node.getElementsByClassName("authortxt")[0].value;
+    //     Books[i].genre = node.getElementsByClassName("genretxt")[0].value;
+    //     Books[i].rate = node.getElementsByClassName("rating")[0].value;
+    //     Books[i].publication = pubDatefield.value;
+
+    //     const Book_card = `
+    //         <h3>${Books[i].title}</h3>
+    //         <b>Author:</b> ${Books[i].author}<br>
+    //         <b>Genre:</b> ${Books[i].genre}<br>
+    //         <b>Rate:</b> ${Books[i].rate}<br>
+    //         <button type="button" class="Delete" data-id="${Books[i].id}">Delete</button>
+    //         <button type="button" class="Edit" data-id="${Books[i].id}">Edit</button>
+    //     `
+    //     node.innerHTML = Book_card;
+    //     bookList.replaceChild(node, bookList.children[child_index]);
+    //     editing = false;
+    // }
 }
 
 function clear(){
@@ -167,6 +187,7 @@ function render(books){
 }
 
 showAll.addEventListener('click', () => {
+    active_books = [...Books];
     clear();
     render(Books);
 });
@@ -186,7 +207,7 @@ form.addEventListener('submit', function(event) {
 
     if (editing){
         let i = Books.findIndex((book) => book.id == editingID);
-        let child_index = Array.from(bookList.children).findIndex((div)=>div.id == i);
+        let child_index = Array.from(bookList.children).findIndex((div)=>div.id == editingID);
 
         Books[i].title = nameInput.value;
         Books[i].author = authorInput.value;
@@ -236,13 +257,7 @@ filterButton.addEventListener('click', function(){
 
 
 document.addEventListener('keydown', (event)=>{
-    if (event.key == 'Escape'){
-        clear_fields();
-        let i = Books.findIndex((book) => book.id == editingID);
-        let child_index = Array.from(bookList.children).findIndex((div)=>div.id == i);
-        let node = create_book_div(Books[i]);
-
-        bookList.replaceChild(node, bookList.children[child_index]);
-        editing = false;
+    if (event.key == 'Escape' && editing){
+        reset_edit();
     }
 });
