@@ -33,6 +33,7 @@ function Book(title, author, genre, rate, pub){
     ID += 1;
 }
 
+const filter_criteria = new Book("","","","","","");
 
 function del(element){
     let i = Books.findIndex((book)=>{
