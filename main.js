@@ -63,70 +63,20 @@ function edit(element){
         reset_edit();
 
     editing = true;
-    // editing = !editing;
     console.log(editing);
-    if (editing){
-        editingID = element.dataset.id;
-        let book = Books.find((book)=> book.id == editingID);
+    editingID = element.dataset.id;
+    let book = Books.find((book)=> book.id == editingID);
 
-        // const editing_template = `
-        //     <input value="${book.title}" type="text" class="titletxt" name="Title">
-        //     <b>Author:</b> <input value="${book.author}" type="text" class="authortxt" name="Author"> <br>
-        //     <b>Genre:</b> <input value="${book.genre}" type="text" class="genretxt" name="Genre"> <br>
-        //     <b>Rate:</b> <input value="${book.rate}" class="rating" type="number" min="0" max="5" step="0.1" placeholder="0 to 5"> <br>
-        //     <button type="button" class="Delete" data-id="${book.id}">Delete</button>
-        //     <button type="button" class="Edit" data-id="${book.id}">Edit</button>
-        // `
+    const node_index = Array.from(bookList.children).findIndex((div)=> div.id == editingID);
+    nameInput.value = book.title;
+    authorInput.value = book.author;
+    genreInput.value = book.genre;
+    rateInput.value = book.rate;
+    pubDatefield.value = book.publication;
 
-        const node_index = Array.from(bookList.children).findIndex((div)=> div.id == editingID);
-        // bookList.children[node_index].innerHTML = editing_template;
-        
-        // const editBtn = bookList.children[node_index].getElementsByClassName("Edit")[0];
-        // editBtn.innerText = "Save";
-        // editBtn.style.backgroundColor = "#8b5e34" ;
-        // editBtn.style.color = "white";
-        // editBtn.addEventListener('click', ()=>edit(editBtn));
+    bookList.children[node_index].style.backgroundColor = "#a33737";
 
-        // const delBtn = bookList.children[node_index].getElementsByClassName("Delete")[0];
-        // delBtn.addEventListener('click', ()=>del(delBtn));
-
-        nameInput.value = book.title;
-        authorInput.value = book.author;
-        genreInput.value = book.genre;
-        rateInput.value = book.rate;
-        pubDatefield.value = book.publication;
-
-        bookList.children[node_index].style.backgroundColor = "#a33737";
-
-        submitButton.innerText = "Save";
-
-    }
-    // } else {
-
-    //     console.log("saving!");
-    //     let i = Books.findIndex((book) => book.id == editingID);
-    //     let child_index = Array.from(bookList.children).findIndex((div)=>div.id == editingID);
-    //     let node = bookList.children[child_index];
-    //     console.log(i);
-
-    //     Books[i].title = node.getElementsByClassName("titletxt")[0].value;
-    //     Books[i].author = node.getElementsByClassName("authortxt")[0].value;
-    //     Books[i].genre = node.getElementsByClassName("genretxt")[0].value;
-    //     Books[i].rate = node.getElementsByClassName("rating")[0].value;
-    //     Books[i].publication = pubDatefield.value;
-
-    //     const Book_card = `
-    //         <h3>${Books[i].title}</h3>
-    //         <b>Author:</b> ${Books[i].author}<br>
-    //         <b>Genre:</b> ${Books[i].genre}<br>
-    //         <b>Rate:</b> ${Books[i].rate}<br>
-    //         <button type="button" class="Delete" data-id="${Books[i].id}">Delete</button>
-    //         <button type="button" class="Edit" data-id="${Books[i].id}">Edit</button>
-    //     `
-    //     node.innerHTML = Book_card;
-    //     bookList.replaceChild(node, bookList.children[child_index]);
-    //     editing = false;
-    // }
+    submitButton.innerText = "Save";
 }
 
 function clear(){
@@ -152,7 +102,6 @@ function sortby(books, field){
             return 0;
         }
     });
-
     clear();
     render(books);
 }
