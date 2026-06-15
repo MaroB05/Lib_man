@@ -190,6 +190,7 @@ form.addEventListener('submit', function(event) {
         bookList.replaceChild(node, bookList.children[child_index]);
         editing = false;
         editingID = -1;
+        submitButton.innerText = "Add Book";
     } else{
         let b = new Book(
             nameInput.value,
