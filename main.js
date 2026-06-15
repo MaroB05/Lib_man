@@ -136,6 +136,27 @@ function render(books){
     }
 }
 
+function update_list(){
+    active_books = filter_list(Books, filter_criteria);
+    render(active_books);
+}
+
+
+function match_criteria(book, filter_criteria){
+    let flag = 0;
+    if (filter_criteria.title == "" || book.title == filter_criteria.title)
+        flag += 1;
+    if (filter_criteria.author == "" || book.author == filter_criteria.author)
+        flag += 1;
+    if (filter_criteria.genre == "" || book.genre == filter_criteria.genre)
+        flag += 1;
+    if (filter_criteria.rate == "" || book.rate == filter_criteria.rate)
+        flag += 1;
+    if (filter_criteria.publication == "" || book.rate == filter_criteria.publication)
+        flag += 1;
+    return flag == 5;
+}
+
 showAll.addEventListener('click', () => {
     active_books = [...Books];
     clear();
@@ -179,29 +200,27 @@ form.addEventListener('submit', function(event) {
         )
 
         Books.push(b);
-        let node = create_book_div(b);
-        bookList.appendChild(node);
-
+        if (match_criteria(b, filter_criteria)){
+            let node = create_book_div(b);
+            bookList.appendChild(node);
+        }
     }
 
     clear_fields();
 });
 
+function filter_list(books, filter_criteria){
+    return books.filter((element, index) => match_criteria(element, filter_criteria));
+}
 
 filterButton.addEventListener('click', function(){
-    active_books = Books.filter((element, index, arr) => {
-        let flag = 0;
-        if (nameInput.value == "" || element.title == nameInput.value)
-            flag += 1;
-        if (authorInput.value == "" || element.author == authorInput.value)
-            flag += 1;
-        if (genreInput.value == "" || element.genre == genreInput.value)
-            flag += 1;
-        if (rateInput.value == "" || element.rate == rateInput.value)
-            flag += 1;
+    filter_criteria.title = nameInput.value;
+    filter_criteria.author = authorInput.value;
+    filter_criteria.genre = genreInput.value;
+    filter_criteria.rate = rateInput.value;
+    filter_criteria.publication = pubDatefield.value;
 
-        return flag == 4;
-    });
+    active_books = filter_list(Books, filter_criteria);
     clear();
     render(active_books);
 });
