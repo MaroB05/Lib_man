@@ -33,4 +33,22 @@ router.post('/', async (req,res)=>{
     res.status(201).json({title, author, genre, rate, publication});
 });
 
+router.put('/:id', async (req,res)=>{
+    const id = req.params.id;
+    const {title, author, genre, rate, publication} = req.body;
+    const response = await Book.findOneAndUpdate({_id: id}, {title, author, genre, rate, publication}, {returnDocument:'after'});
+    res.status(201).json(response);
+});
+
+router.delete('/:id', async (req,res, next)=>{
+    try{
+        const id = req.params.id;
+        const response = await Book.findOneAndDelete({_id: id});
+        res.status(200).json(response);
+    } catch(err){
+        console.error(err);
+        next();
+    }
+});
+
 module.exports = router;
