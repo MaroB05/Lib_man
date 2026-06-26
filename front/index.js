@@ -25,7 +25,7 @@ var Books = []
 var active_books = []
 
 function Book(title, author, genre, rate, pub){
-    this.id = ID;
+    this._id = ID;
     this.title = title;
     this.author = author;
     this.genre = genre;
@@ -49,15 +49,27 @@ async function get_all(){
     
 }
 
-function del(element){
-    let i = Books.findIndex((book)=>{
-        return book._id == element.dataset.id;
-    });
-    console.log("Delete");
-    Books.splice(i,1);
-    active_books = [...Books];
-    clear();
-    render(Books);
+async function del(element){
+    try{
+        let i = Books.findIndex((book)=>{
+            return book._id == element.dataset.id;
+        });
+        id = Books[i]._id;
+        console.log("Delete");
+        Books.splice(i,1);
+        active_books = [...Books];
+        const resp = await fetch(`${apiUrl}/books/${id}`, {
+            method: 'DELETE',
+            headers: {
+                'content-type': 'application/json'
+            }
+        });
+        const res = await resp.json();
+        clear();
+        render(Books);
+    } catch (err){
+        console.error(err);
+    }
 }
 
 function reset_edit(){
@@ -111,6 +123,23 @@ async function register(book){
         console.error(err);
     }
 }
+
+async function update(book) {
+    console.log(JSON.stringify(book));
+    try{
+        const resp = await fetch(`${apiUrl}/books/${book._id}`, {
+            method: 'PUT',
+            headers: {
+                'content-type': 'application/json'
+            },
+            body: JSON.stringify(book)
+        });
+        const res = await resp.json();
+    } catch (err){
+        console.error(err);
+    }
+}
+
 
 function clear_fields(){
     nameInput.value = "";
@@ -189,7 +218,8 @@ function match_criteria(book, filter_criteria){
 }
 
 
-showAll.addEventListener('click', () => {
+showAll.addEventListener('click', async() => {
+    await get_all();
     active_books = [...Books];
     clear();
     render(Books);
@@ -223,6 +253,7 @@ form.addEventListener('submit', function(event) {
         editing = false;
         editingID = -1;
         submitButton.innerText = "Add Book";
+        update(Books[i]);
     } else{
         let b = new Book(
             nameInput.value,
